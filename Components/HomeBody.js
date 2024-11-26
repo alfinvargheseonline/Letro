@@ -6,22 +6,36 @@ import {
   FlatList,
   TouchableOpacity,
   Image,
+  ScrollView,
 } from "react-native";
 import axios from "axios";
 import { Ionicons } from "@expo/vector-icons";
 
 const HomePage = () => {
   const [newProducts, setNewProducts] = useState([]);
+  const [popularProducts, setPopularProducts] = useState([]);
 
   useEffect(() => {
+    // Fetch new products
     axios
       .get("http://192.168.1.78:3000/newproducts")
       .then((response) => {
-        console.log("Fetched products:", response.data);
+        console.log("Fetched new products:", response.data);
         setNewProducts(response.data);
       })
       .catch((error) => {
         console.error("Error fetching new products:", error);
+      });
+
+    // Fetch popular products
+    axios
+      .get("http://192.168.1.78:3000/popular")
+      .then((response) => {
+        console.log("Fetched popular products:", response.data);
+        setPopularProducts(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching popular products:", error);
       });
   }, []);
 
@@ -48,13 +62,8 @@ const HomePage = () => {
         />
 
         <View style={styles.details}>
-          <Text style={styles.name}>
-            {product.productname}
-          </Text>
+          <Text style={styles.name}>{product.productname}</Text>
           <Text style={styles.price}>{product.price}</Text>
-          <Text style={styles.description}>
-            {/* {product.description} */}
-          </Text>
           <View style={styles.ratingContainer}>
             <Ionicons name="star" size={16} color="#FFD700" />
             <Text style={styles.rating}>{product.rating}</Text>
@@ -84,9 +93,10 @@ const HomePage = () => {
   );
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent}>
       {renderSection("New Products", newProducts)}
-    </View>
+      {renderSection("Popular Products", popularProducts)}
+    </ScrollView>
   );
 };
 
@@ -94,7 +104,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#F5F6F8",
-    borderRadius:35
+    borderRadius:25,
+    marginBottom:15
+  },
+  scrollContent: {
+    paddingBottom: 20, // Add some padding at the bottom for better spacing
   },
   section: {
     marginVertical: 10,
@@ -172,12 +186,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "700",
     color: "#1E222B",
-    marginBottom: 4,
-  },
-  description: {
-    fontSize: 12,
-    color: "#8891A5",
-    lineHeight: 16,
     marginBottom: 4,
   },
   ratingContainer: {
