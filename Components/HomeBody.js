@@ -10,8 +10,12 @@ import {
 } from "react-native";
 import axios from "axios";
 import { Ionicons } from "@expo/vector-icons";
+import { useNavigation } from '@react-navigation/native';
 
-const HomePage = () => {
+
+const HomeBody = () => {
+  const navigation = useNavigation();
+
   const [newProducts, setNewProducts] = useState([]);
   const [popularProducts, setPopularProducts] = useState([]);
 
@@ -39,11 +43,15 @@ const HomePage = () => {
       });
   }, []);
 
-  const ProductCard = ({ product }) => {
+  const ProductCard = ({ product, navigation }) => {
     const [isFavorite, setIsFavorite] = useState(false);
-
+  
     return (
-      <View style={styles.card}>
+      <TouchableOpacity
+        onPress={() => navigation.navigate("ProductDetails", { product })} // Ensure this matches the screen name
+        style={styles.card}
+      >
+        {/* Card content */}
         <TouchableOpacity
           style={styles.favoriteButton}
           onPress={() => setIsFavorite(!isFavorite)}
@@ -54,13 +62,13 @@ const HomePage = () => {
             color={isFavorite ? "#FF8181" : "#1E222B"}
           />
         </TouchableOpacity>
-
+  
         <Image
           source={{ uri: product.image }}
           style={styles.image}
           resizeMode="contain"
         />
-
+  
         <View style={styles.details}>
           <Text style={styles.name}>{product.productname}</Text>
           <Text style={styles.price}>{product.price}</Text>
@@ -69,21 +77,22 @@ const HomePage = () => {
             <Text style={styles.rating}>{product.rating}</Text>
           </View>
         </View>
-      </View>
+      </TouchableOpacity>
     );
   };
-
+  
+  
   const renderSection = (title, data) => (
     <View style={styles.section}>
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionTitle}>{title}</Text>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate("Newproducts")}>
           <Text style={styles.seeAll}>See All</Text>
         </TouchableOpacity>
       </View>
       <FlatList
         data={data}
-        renderItem={({ item }) => <ProductCard product={item} />}
+        renderItem={({ item }) => <ProductCard product={item} navigation={navigation} />} // Pass navigation here
         keyExtractor={(item) => item.id}
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -91,6 +100,7 @@ const HomePage = () => {
       />
     </View>
   );
+  
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent}>
@@ -199,4 +209,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HomePage;
+export default HomeBody;

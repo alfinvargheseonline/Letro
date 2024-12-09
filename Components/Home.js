@@ -11,6 +11,7 @@ import React from "react";
 import { StatusBar } from "expo-status-bar";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import HomeBody from "./HomeBody";
+import BottomNav from "./BottomNav";
 
 const { width } = Dimensions.get("window"); 
 
@@ -73,7 +74,9 @@ const Home = () => {
 
        
       </View>
-      <HomeBody />
+      {/* <HomeBody /> */}
+      <BottomNav/>
+      
     </SafeAreaView>
   );
 };
